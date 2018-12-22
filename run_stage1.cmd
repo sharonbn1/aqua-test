@@ -1,0 +1,1 @@
+java -jar .\stage1\target\stage1-1.0.jar --dir C:/CD --url https://localhost:8888/file --media xml
