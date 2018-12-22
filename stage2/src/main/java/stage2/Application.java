@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.*;
 import common.CliUtils;
 
 @SpringBootApplication
-public class Application
+public class Application implements ApplicationRunner
 {
 	// command line args options
 	public static Option protocolArgOption =
@@ -18,7 +18,7 @@ public class Application
 
 	public static Option portArgOption =
 		Option.builder("").longOpt("server.port")
-			.hasArg().argName("server.port=<port>")
+			.hasArg().argName("=port")
 			.valueSeparator()
 			.desc("port number. this is SpringMVC argument. only long format --server.port=<port> is valid. default value: 8080")
 			.build();
@@ -30,7 +30,9 @@ public class Application
 			.build();
 
 	// command line args values
-	public static String protocolArg;
+	public static Options options;
+	public static String protocolArg; 
+	public static boolean helpArgSpecified;
 
 	public static void main(String... args) {
 		try {
@@ -46,7 +48,7 @@ public class Application
 
 	private static void parseArgs(String... args) throws ParseException {
 		CommandLine cmd;
-		Options options = new Options();
+		options = new Options();
 		options.addOption(protocolArgOption);
 		options.addOption(portArgOption);
 		options.addOption(helpArgOption);
@@ -54,8 +56,14 @@ public class Application
 		cmd = parser.parse(options, args);
 		protocolArg = CliUtils.getOptionValue(cmd, protocolArgOption, "http");
 		// print help if requested
-		if (CliUtils.getOptionValue(cmd, helpArgOption) != null) {
-			new HelpFormatter().printHelp("java -jar stage2-1.0.jar", options);
+		if (CliUtils.isSpecified(cmd, helpArgOption)) {
+			helpArgSpecified = true;
 		}
+	}
+
+	// print usage after Spring logging
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		if (helpArgSpecified) new HelpFormatter().printHelp("java -jar stage2-1.0.jar", options);
 	}
 }

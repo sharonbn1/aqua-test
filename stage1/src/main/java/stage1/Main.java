@@ -23,13 +23,13 @@ public class Main
 	public static Option dirArgOption =
 		Option.builder("d").longOpt("dir")
 			.hasArg().argName("dir")
-			.desc("root directory")
+			.desc("root directory (required)")
 			.build();
 
 	public static Option serverUrlArgOption =
 		Option.builder("u").longOpt("url")
 			.hasArg().argName("url")
-			.desc("server url to send post requests. full url expected. example: \"http://aqua.com:1234/api\"")
+			.desc("server url to send post requests (required). full url expected. example: \"http://aqua.com:1234/api\"")
 			.build();
 
 	public static Option mediaTypeArgOption =
@@ -74,11 +74,11 @@ public class Main
 		dirArg = CliUtils.getOptionValue(cmd, dirArgOption);
 		serverUrlArg = CliUtils.getOptionValue(cmd, serverUrlArgOption);
 		mediaTypeArg = CliUtils.getOptionValue(cmd, mediaTypeArgOption);
-		if (mediaTypeArg.equals("xml")) mediaTypeArg = HttpUtils.xmlContentType;
+		if (mediaTypeArg != null && mediaTypeArg.equals("xml")) mediaTypeArg = HttpUtils.xmlContentType;
 		else mediaTypeArg = HttpUtils.jsonContentType;
 		// print help if requested or any of required args not specified
 		if (dirArg == null || serverUrlArg == null || 
-				CliUtils.getOptionValue(cmd, helpArgOption) != null) {
+				CliUtils.isSpecified(cmd, helpArgOption)) {
 			new HelpFormatter().printHelp("java -jar stage1-1.0.jar", options);
 		}
 	}

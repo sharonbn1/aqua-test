@@ -2,6 +2,7 @@ package common;
 
 import java.time.*;
 import java.time.format.*;
+import java.nio.file.*;
 import java.nio.file.attribute.*;
 
 /**
@@ -41,7 +42,8 @@ public class FileUtils
 	 * @return {@code String} file's extension, or an empty String if no extension was found.
 	 */
 	public static String getExtension(String filename) {
-		int dotpos = filename.lastIndexOf('.');
-		return dotpos > -1 ? filename.substring(dotpos) : "";
+		String shortFilename = Paths.get(filename).getFileName().toString();
+		int dotpos = shortFilename.lastIndexOf('.');
+		return dotpos > -1 ? shortFilename.substring(dotpos+1) : "";
 	}
 }
